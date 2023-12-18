@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_weather/services/local_storage.dart';
-import 'package:flutter_weather/services/service_adapter.dart';
-import 'package:flutter_weather/services/web_api.dart';
+import 'package:flutter_weather/src/services/local_storage.dart';
+import 'package:flutter_weather/src/services/service_adapter.dart';
+import 'package:flutter_weather/src/services/web_api.dart';
 
 class HomePageManager {
   HomePageManager({WebApi? webApi, LocalStorage? storage}) {

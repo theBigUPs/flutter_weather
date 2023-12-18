@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_weather/services/local_storage.dart';
-import 'package:flutter_weather/services/service_adapter.dart';
-import 'package:flutter_weather/ui/pages/home/home_page.dart';
+import 'package:flutter_weather/src/services/local_storage.dart';
+import 'package:flutter_weather/src/services/service_adapter.dart';
+import 'package:flutter_weather/src/ui/pages/home/home_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,7 +9,6 @@ Future<void> main() async {
   await getIt<LocalStorage>().init();
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -21,9 +20,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
+      //TODO add routing here
       home: const HomePage(),
     );
   }
 }
-
-

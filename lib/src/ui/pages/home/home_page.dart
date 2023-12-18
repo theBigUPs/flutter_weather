@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_weather/ui/pages/home/home_page_manager.dart';
+import 'package:flutter_weather/src/ui/pages/home/home_page_manager.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,50 +9,45 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
-  final manager= HomePageManager();
-  
+  final manager = HomePageManager();
+
   @override
   void initState() {
     super.initState();
     manager.loadWeather();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-
         child: ValueListenableBuilder(
-          valueListenable: manager.loadingNotifier, 
-          builder: (context, loadingStatus, child)
-          {
-            switch (loadingStatus) {
-              case Loading():                
-                return const CircularProgressIndicator();
-              
-              case LoadingSuccess():
-                return WeatherWidget(
-                  manager: manager,
-                  weather: loadingStatus.weather,
-                );
+            valueListenable: manager.loadingNotifier,
+            builder: (context, loadingStatus, child) {
+              switch (loadingStatus) {
+                case Loading():
+                  return const CircularProgressIndicator();
 
-              case LoadingError():
-                return ErrorWidget(
-                  errorMessage: loadingStatus.message,
-                  onRetry: manager.loadWeather,
-                );
-            }
-          }
-        ),
-        
+                case LoadingSuccess():
+                  return WeatherWidget(
+                    manager: manager,
+                    weather: loadingStatus.weather,
+                  );
+
+                case LoadingError():
+                  return ErrorWidget(
+                    errorMessage: loadingStatus.message,
+                    onRetry: manager.loadWeather,
+                  );
+              }
+            }),
       ),
     );
   }
 }
 
-
+//TODO needs to be on its own widget file
 class ErrorWidget extends StatelessWidget {
   const ErrorWidget({
     super.key,
@@ -77,9 +72,7 @@ class ErrorWidget extends StatelessWidget {
   }
 }
 
-
-
-
+//TODO needs to be on its own widget file
 class WeatherWidget extends StatelessWidget {
   const WeatherWidget({
     super.key,
@@ -117,7 +110,6 @@ class WeatherWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 7
               ValueListenableBuilder<String>(
                 valueListenable: manager.temperatureNotifier,
                 builder: (context, temperature, child) {
