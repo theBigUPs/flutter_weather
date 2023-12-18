@@ -91,7 +91,6 @@ class WeatherWidget extends StatelessWidget {
           alignment: Alignment.topRight,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            // 6
             child: TextButton(
               onPressed: manager.convertTemperature,
               child: ValueListenableBuilder<String>(
