@@ -10,7 +10,7 @@ abstract interface class WebApi {
   });
 }
 
-//TODO this needs a better api
+
 class FreeCodeCampApi implements WebApi {
   @override
   Future<Weather> getWeather({
