@@ -22,19 +22,29 @@ class HomePageManager {
     loadingNotifier.value = const Loading();
     final isCelsius = _storage.isCelsius;
     buttonNotifier.value = isCelsius ? '°C' : '°F';
+
+
+
     try {
-      final weather =
-          await _webApi.getWeather(latitude: 41.0138, longitude: 28.9497);
-      _temperature = weather.temp;
+      final weather = await _webApi.getWeather(
+        cityName: "istanbul",
+      );
+      _temperature = weather.main.temp;
+
+
 
       final temperature =
           isCelsius ? _temperature : _convertToFahrenheit(_temperature);
       temperatureNotifier.value = '$temperature°';
       loadingNotifier.value = LoadingSuccess(
-        weather: weather.desc,
+        weather: weather.weather[0].main
       );
+      // Now you have the weather data, and you can use it as needed
+      //print('Temperature: ${weather.main.temp}');
+      //print('Weather: ${weather.weather[0].main}');
     } catch (e) {
-      loadingNotifier.value = const LoadingError("Couldn't load the weather");
+      print(e);
+      loadingNotifier.value = const LoadingError("Couldn't load the weather ");
     }
   }
 
