@@ -12,7 +12,7 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  //TODO this app is in desperate need of an darktheme
+  //TODO this app is in desperate need of an darktheme and ligttheme setting
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

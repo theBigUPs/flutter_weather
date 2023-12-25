@@ -7,7 +7,7 @@ abstract interface class LocalStorage {
   Future<void> saveIsCelsius(bool value);
 }
 
-//TODO this service should be modified to use hive
+//TODO this service should be modified to use hive or sqllite
 class SharedPrefStorage implements LocalStorage {
   static const isCelsiusKey = "isCelcius";
   static const latitudeKey = "isLatitude";
