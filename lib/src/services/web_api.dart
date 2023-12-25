@@ -1,34 +1,43 @@
 import 'dart:convert';
 
 import 'package:flutter_weather/src/models/weather_model.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 abstract interface class WebApi {
   Future<Weather> getWeather({
-    required double latitude,
-    required double longitude,
+    required String cityName
   });
 }
+//2e25b2bfc703c1d877cae76e2026a7cd   key
 
-//TODO this needs a better api
-class FreeCodeCampApi implements WebApi {
+class OpenWeatherApi implements WebApi {
+  //final String apiKey;
+
+  OpenWeatherApi();
+
   @override
   Future<Weather> getWeather({
-    required double latitude,
-    required double longitude,
+    required String cityName
   }) async {
     final url = Uri.parse(
-        'https://fcc-weather-api.glitch.me/api/current?lat=$latitude&lon=$longitude');
-    final result = await get(url);
-    final jsonString = result.body;
-    //TODO convert this to jsonmap model using jsonserializable
-    final jsonMap = jsonDecode(jsonString);
-    final temperature = jsonMap['main']['temp'] as double;
-    final weather = jsonMap['weather'][0]['main'] as String;
+        'https://api.openweathermap.org/data/2.5/weather?q=$cityName&appid=2e25b2bfc703c1d877cae76e2026a7cd&units=metric');
 
-    return Weather(
-      temp: temperature,
-      desc: weather,
-    );
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final jsonMap = jsonDecode(response.body);
+        final weather = Weather.fromJson(jsonMap);
+        //print(weather);
+        return weather;
+      } else {
+        // Handle error
+        //print(response);
+        throw Exception('Failed to load weather data');
+      }
+    } catch (e) {
+      // Handle exceptions
+      throw Exception('Error: $e');
+    }
   }
 }
