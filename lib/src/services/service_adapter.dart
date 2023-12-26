@@ -7,4 +7,5 @@ final getIt = GetIt.instance;
 void setUpServiceAdapter() {
   getIt.registerLazySingleton<WebApi>(() => OpenWeatherApi());
   getIt.registerLazySingleton<LocalStorage>(() => SharedPrefStorage());
+  //getIt.registerLazySingleton<LocationService>(() => GeoLocator());
 }
