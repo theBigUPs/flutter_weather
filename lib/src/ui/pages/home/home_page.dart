@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_weather/src/services/location_service.dart';
+import 'package:flutter_weather/src/services/service_adapter.dart';
 
 import 'home_page_manager.dart';
 
@@ -13,7 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final manager = HomePageManager();
-  final GeoLocator geoLocator = GeoLocator();
+  final _loc = getIt<LocationService>();
   @override
   void initState() {
     super.initState();
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomePage> {
         TextButton(
             onPressed: () {
               // Call the determinePosition method when the button is pressed
-              geoLocator.determinePosition().then((position) {
+              _loc.determinePosition().then((position) {
                 // Handle the position data as needed
                 print(
                     'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
