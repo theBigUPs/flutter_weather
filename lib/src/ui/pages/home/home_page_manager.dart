@@ -1,86 +1,62 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_weather/src/services/local_storage.dart';
 import 'package:flutter_weather/src/services/service_adapter.dart';
 import 'package:flutter_weather/src/services/web_api.dart';
+import 'package:mobx/mobx.dart';
 
-class HomePageManager {
-  HomePageManager({WebApi? webApi, LocalStorage? storage}) {
-    _webApi = webApi ?? getIt<WebApi>();
-    _storage = storage ?? getIt<LocalStorage>();
-  }
+part 'home_page_manager.g.dart';
 
-  late WebApi _webApi;
-  late LocalStorage _storage;
+class HomePageManager = _HomePageManager with _$HomePageManager;
 
-  final loadingNotifier = ValueNotifier<LoadingStatus>(const Loading());
-  final temperatureNotifier = ValueNotifier<String>('');
-  final buttonNotifier = ValueNotifier<String>('°C');
+abstract class _HomePageManager with Store {
+  final WebApi _webApi;
+  final LocalStorage _storage;
 
-  late double _temperature;
+  _HomePageManager({WebApi? webApi, LocalStorage? storage})
+      : _webApi = webApi ?? getIt<WebApi>(),
+        _storage = storage ?? getIt<LocalStorage>();
 
-  Future<void> loadWeather() async {
-    loadingNotifier.value = const Loading();
-    final isCelsius = _storage.isCelsius;
-    buttonNotifier.value = isCelsius ? '°C' : '°F';
+  @observable
+  String temperature = '';
 
+  @observable
+  String buttonUnit = '°C';
 
+  @observable
+  double _temperature = 0.0;
 
+  @observable
+  String city = "";
+
+  @observable
+  String desc = "";
+
+  @action
+  Future<void> loadWeatherWithCityName({required String cityName}) async {
+    city = cityName;
     try {
       final weather = await _webApi.getWeather(
-        cityName: "istanbul",
+        cityName: cityName,
       );
       _temperature = weather.main.temp;
-
-
-
-      final temperature =
-          isCelsius ? _temperature : _convertToFahrenheit(_temperature);
-      temperatureNotifier.value = '$temperature°';
-      loadingNotifier.value = LoadingSuccess(
-        weather: weather.weather[0].main
-      );
-      // Now you have the weather data, and you can use it as needed
-      //print('Temperature: ${weather.main.temp}');
-      //print('Weather: ${weather.weather[0].main}');
+      temperature = _temperature.toString();
+      desc = weather.weather[0].description;
     } catch (e) {
       print(e);
-      loadingNotifier.value = const LoadingError("Couldn't load the weather ");
     }
   }
 
-  double _convertToFahrenheit(double temperature) {
-    return (temperature * 9 / 5 + 32);
+  @action
+  Future<void> loadWeatherLatLon(
+      {required double latitude, required double longtitude}) async {
+    try {
+      final weather =
+          await _webApi.getWeatherLatLon(lat: latitude, lon: longtitude);
+      _temperature = weather.main.temp;
+      temperature = _temperature.toString();
+      desc = weather.weather[0].description;
+      city = weather.name;
+    } catch (e) {
+      print(e);
+    }
   }
-
-  void convertTemperature() {
-    final isCelsius = !_storage.isCelsius;
-    _storage.saveIsCelsius(isCelsius);
-    final temperature =
-        (isCelsius) ? _temperature : _convertToFahrenheit(_temperature);
-    temperatureNotifier.value = '$temperature°';
-    buttonNotifier.value = (isCelsius) ? '°C' : '°F';
-  }
-}
-
-sealed class LoadingStatus {
-  const LoadingStatus();
-
-  get message => null;
-}
-
-class Loading extends LoadingStatus {
-  const Loading();
-}
-
-class LoadingError extends LoadingStatus {
-  const LoadingError(this.message);
-  @override
-  final String message;
-}
-
-class LoadingSuccess extends LoadingStatus {
-  const LoadingSuccess({
-    required this.weather,
-  });
-  final String weather;
 }
