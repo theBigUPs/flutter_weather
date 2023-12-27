@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_weather/src/services/local_storage.dart';
 import 'package:flutter_weather/src/services/location_service.dart';
 import 'package:flutter_weather/src/services/service_adapter.dart';
 
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final manager = HomePageManager();
   final _loc = getIt<LocationService>();
+  final store = getIt<LocalStorage>();
   @override
   void initState() {
     super.initState();
@@ -38,16 +40,28 @@ class _HomePageState extends State<HomePage> {
           },
         ),
         TextButton(
-            onPressed: () {
+            onPressed: () async {
               // Call the determinePosition method when the button is pressed
-              _loc.determinePosition().then((position) {
-                // Handle the position data as needed
-                print(
-                    'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
-              }).catchError((error) {
-                // Handle errors if any
-                print('Error: $error');
-              });
+              // _loc.determinePosition().then((position) {
+              //   // Handle the position data as needed
+              //   print(
+              //       'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+
+              //   manager.loadWeatherLatLon(
+              //       latitude: position.latitude,
+              //       longtitude: position.longitude);
+              // }).catchError((error) {
+              //   // Handle errors if any
+              //   print('Error: $error');
+              // });
+              String cities = await store.getCities();
+              List<String> stringList = cities
+                  .replaceAll('[', '')
+                  .replaceAll(']', '')
+                  .split(',')
+                  .map((e) => e.trim())
+                  .toList();
+              print(stringList);
             },
             child: const Text("refresh"))
       ]),
