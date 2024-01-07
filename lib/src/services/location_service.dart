@@ -12,6 +12,7 @@ class GeoLocator implements LocationService {
 
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    //this needs a pop up to tell the user to enable location services
     if (!serviceEnabled) {
       // Location services are not enabled don't continue
       // accessing the position and request users of the

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_weather/src/services/local_storage.dart';
 import 'package:flutter_weather/src/services/service_adapter.dart';
-import 'package:flutter_weather/src/ui/pages/home/home_page.dart';
+import 'package:flutter_weather/src/ui/views/home_page.dart';
+import 'package:flutter_weather/src/view_models/home_page_viewmodel.dart';
+import 'package:provider/provider.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,8 +15,7 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  //TODO is this app is in desperate need of an darktheme and ligttheme setting?
-//ashjkdasgdhjasgdsahjdgjhsg
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,8 +23,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      //TODO add routing here
-      home: const HomePage(),
+    
+      home: ChangeNotifierProvider(
+        create: (BuildContext context) { 
+          return HomePageViewModel();
+         },
+         child: const HomePage(),),
+         
     );
+    
   }
 }
