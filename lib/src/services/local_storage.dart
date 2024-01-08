@@ -5,6 +5,8 @@ abstract interface class LocalStorage {
 
   bool get isCelsius;
   Future<void> saveIsCelsius(bool value);
+  Future<void> saveCities(List<String> cities);
+  List<String> getCities();
 }
 
 class SharedPrefStorage implements LocalStorage {
@@ -28,5 +30,13 @@ class SharedPrefStorage implements LocalStorage {
     await prefs.setBool(isCelsiusKey, value);
   }
 
-  
+  @override
+  Future<void> saveCities(List<String> cities) async {
+    await prefs.setStringList(cityListKey, cities);
+  }
+
+  @override
+  List<String> getCities() {
+    return prefs.getStringList(cityListKey) ?? [];
+  }
 }

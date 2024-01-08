@@ -12,13 +12,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
   final _loc = getIt<LocationService>();
   //final store = getIt<LocalStorage>();
   @override
   void initState() {
     super.initState();
-    
   }
 
   @override
@@ -26,52 +24,55 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(),
       body: Column(
-        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        
-        children: [
-        
-        Consumer<HomePageViewModel>(builder:(context,viewModel,child)
-        {
-          return Text(viewModel.city);
-        }),
-        
-        Consumer<HomePageViewModel>(builder:(context,viewModel,child)
-        {
-          return Text(viewModel.temperature);
-        } ),
-        Consumer<HomePageViewModel>(builder:(context,viewModel,child)
-        {
-          return Text(viewModel.desc);
-        } ),
-        TextButton(
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-            onPressed: () {
-              HomePageViewModel viewModel = Provider.of(context,listen: false);
-              //viewModel.loadWeatherLatLon(latitude: 40.73, longtitude: -73.93);
-              // Call the determinePosition method when the button is pressed
-              _loc.determinePosition().then((position) {
-                // Handle the position data as needed
-                print(
-                    'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+          children: [
+            Consumer<HomePageViewModel>(builder: (context, viewModel, child) {
+              return Text(viewModel.city);
+            }),
+            Consumer<HomePageViewModel>(builder: (context, viewModel, child) {
+              return Text(viewModel.temperature);
+            }),
+            Consumer<HomePageViewModel>(builder: (context, viewModel, child) {
+              return Text(viewModel.desc);
+            }),
+            TextButton(
+                onPressed: () {
+                  HomePageViewModel viewModel =
+                      Provider.of(context, listen: false);
+                  //viewModel.loadWeatherLatLon(latitude: 40.73, longtitude: -73.93);
+                  // Call the determinePosition method when the button is pressed
 
-                viewModel.loadWeatherLatLon(
-                    latitude: position.latitude,
-                    longtitude: position.longitude);
-              }).catchError((error) {
-                // Handle errors if any
-                print('Error: $error');
-              });
-              // String cities = await store.getCities();
-              // List<String> stringList = cities
-              //     .replaceAll('[', '')
-              //     .replaceAll(']', '')
-              //     .split(',')
-              //     .map((e) => e.trim())
-              //     .toList();
-              // print(stringList);
-            },
-            child: const Text("refresh"))
-      ]),
+                  _loc.determinePosition().then((position) {
+                    // Handle the position data as needed
+                    print(
+                        'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+
+                    viewModel.loadWeatherLatLon(
+                        latitude: position.latitude,
+                        longtitude: position.longitude);
+                  }).catchError((error) {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AlertDialog(
+                            title: Text("Please enable location Services"),
+                          );
+                        });
+                    // Handle errors if any
+                    print('Error: $error');
+                  });
+                  // String cities = await store.getCities();
+                  // List<String> stringList = cities
+                  //     .replaceAll('[', '')
+                  //     .replaceAll(']', '')
+                  //     .split(',')
+                  //     .map((e) => e.trim())
+                  //     .toList();
+                  // print(stringList);
+                },
+                child: const Text("refresh"))
+          ]),
     );
   }
 }
