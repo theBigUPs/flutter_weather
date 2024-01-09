@@ -18,7 +18,7 @@ class OpenWeatherApi implements WebApi {
   @override
   Future<Weather> getWeather({required String cityName}) async {
     final url = Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?q=$cityName&appid=2e25b2bfc703c1d877cae76e2026a7cd&units=metric');
+        "https://api.openweathermap.org/data/2.5/forecast?q=$cityName&appid=2e25b2bfc703c1d877cae76e2026a7cd&units=metric");
 
     try {
       final response = await http.get(url);

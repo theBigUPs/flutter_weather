@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_weather/src/models/weather_model.dart';
 import 'package:flutter_weather/src/services/local_storage.dart';
 import 'package:flutter_weather/src/services/service_adapter.dart';
 import 'package:flutter_weather/src/services/web_api.dart';
@@ -13,32 +14,77 @@ class HomePageViewModel with ChangeNotifier {
 
   String temperature = '';
   String buttonUnit = '°C';
-  double _temperature = 0.0;
+  final double _temperature = 0.0;
   String city = "";
   String desc = "";
   String dateTime = "";
+  String high = "";
+  String low = "";
+  String feels = "";
+  String imgState = "CLEAR";
 
-  Future<void> loadWeatherWithCityName({required String cityName}) async {
+  //Weather? weather;
+  List<String> cities = [
+    "new york",
+    "sydney",
+  ];
+  List<Weather> cityiesWeather = [];
+
+  Future<Weather?> loadWeatherWithCityName({required String cityName}) async {
     city = cityName;
     try {
-      final weather = await _webApi.getWeather(
+      Weather weather = await _webApi.getWeather(
         cityName: cityName,
       );
-      _temperature = weather.main.temp;
-      temperature = _temperature.toInt().toString();
-      desc = weather.weather[0].description;
+
       getDateTime();
-      notifyListeners();
+      //notifyListeners();
+      return weather;
     } catch (e) {
       print(e);
     }
+    return null;
+  }
+
+  void notify() {
+    notifyListeners();
+    //TODO THIS IS BAD
+  }
+
+  void populateCities() {
+    for (var element in cities) {
+      loadWeatherWithCityName(cityName: element)
+          .then((value) => {cityiesWeather.add(value!)});
+    }
+    //notify();
+  }
+
+  String weekDay(int dayNum) {
+    switch (dayNum) {
+      case 1:
+        return "Monday";
+      case 2:
+        return "Tuesday";
+      case 3:
+        return "Wednesday";
+      case 4:
+        return "Thursday";
+      case 5:
+        return "Friday";
+      case 6:
+        return "Saturday";
+      case 7:
+        return "Sunday";
+    }
+    return "";
   }
 
   void getDateTime() {
     DateTime now = DateTime.now();
-
+    String min = now.minute.toString();
+    int dayName = now.weekday;
     dateTime =
-        "${now.day}/${now.month}/${now.year} | ${now.hour}:${now.minute}";
+        "${weekDay(dayName)}, ${now.day}/${now.month}/${now.year} | ${now.hour}:${min.length == 1 ? "0$min" : min}";
   }
 
   Future<void> loadWeatherLatLon(
@@ -46,10 +92,10 @@ class HomePageViewModel with ChangeNotifier {
     try {
       final weather =
           await _webApi.getWeatherLatLon(lat: latitude, lon: longtitude);
-      _temperature = weather.main.temp;
+      //_temperature = weather.main.temp;
       temperature = _temperature.toString();
-      desc = weather.weather[0].description;
-      city = weather.name;
+      //desc = weather.weather[0].description;
+      //city = weather.name;
       notifyListeners();
     } catch (e) {
       print(e);

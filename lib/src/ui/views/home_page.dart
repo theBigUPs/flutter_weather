@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather/src/models/weather_model.dart';
 import 'package:flutter_weather/src/services/location_service.dart';
 import 'package:flutter_weather/src/services/service_adapter.dart';
+import 'package:flutter_weather/src/ui/components/navbar.dart';
 import 'package:flutter_weather/src/view_models/home_page_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -22,14 +24,30 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     HomePageViewModel viewModel = Provider.of(context, listen: false);
+    DateTime temp = DateTime.now();
+    Weather? mainweather;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      HomePageViewModel viewModel = Provider.of(
+        context,
+        listen: false,
+      );
+
+      viewModel.loadWeatherWithCityName(cityName: "istanbul").then((value) {
+        mainweather = value;
+
+        viewModel.populateCities();
+        viewModel.notify();
+      });
+    });
     return Scaffold(
+      bottomNavigationBar: navbar(),
       appBar: AppBar(
         backgroundColor: const Color(0xff28227f),
         centerTitle: true,
         title: Consumer<HomePageViewModel>(
           builder: (context, viewModel, child) {
             return Text(
-              viewModel.city,
+              mainweather!.city.name ?? "",
               style: const TextStyle(color: Colors.white),
             );
           },
@@ -40,7 +58,16 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 HomePageViewModel viewModel =
                     Provider.of(context, listen: false);
-                viewModel.loadWeatherWithCityName(cityName: "istanbul");
+                viewModel
+                    .loadWeatherWithCityName(cityName: "istanbul")
+                    .then((value) {
+                  mainweather = value;
+                  temp = DateTime.now();
+                  //viewModel.notify();
+                  viewModel.populateCities();
+                  viewModel.notify();
+                });
+
                 //viewModel.loadWeatherLatLon(latitude: 40.73, longtitude: -73.93);
                 // Call the determinePosition method when the button is pressed
 
@@ -88,187 +115,302 @@ class _HomePageState extends State<HomePage> {
               end: Alignment.topCenter,
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Consumer<HomePageViewModel>(
-                builder: (context, viewModel, child) {
+          child: ListView(children: [
+            Column(
+              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(
+                  height: 8,
+                ),
+                Consumer<HomePageViewModel>(
+                  builder: (context, viewModel, child) {
+                    return Text(
+                      (mainweather == null)
+                          ? ""
+                          : mainweather!.list[0].weather[0].description ?? "",
+                      style: const TextStyle(color: Colors.white),
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                SizedBox(
+                    height: 150,
+                    child: Consumer<HomePageViewModel>(
+                        builder: (context, viewModel, child) {
+                      return Image.asset(
+                        "assets/images/${mainweather!.list[0].weather[0].main.name ?? "CLEAR"}.png",
+                        fit: BoxFit.fitHeight,
+                      );
+                    })),
+                Consumer<HomePageViewModel>(
+                  builder: (context, viewModel, child) {
+                    return Text(
+                      " ${mainweather!.list[0].main.temp ?? ""}°",
+                      style: const TextStyle(color: Colors.white, fontSize: 64),
+                    );
+                  },
+                ),
+                Consumer<HomePageViewModel>(
+                    builder: (context, viewModel, child) {
                   return Text(
-                    viewModel.desc,
-                    style: const TextStyle(color: Colors.white),
+                    viewModel.dateTime,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
                   );
-                },
-              ),
-              const Image(
-                image: AssetImage("assets/images/weathericonsunnycloudy.png"),
-              ),
-              Consumer<HomePageViewModel>(
-                builder: (context, viewModel, child) {
-                  return Text(
-                    " ${viewModel.temperature}°",
-                    style: const TextStyle(color: Colors.white, fontSize: 64),
-                  );
-                },
-              ),
-              Consumer<HomePageViewModel>(builder: (context, viewModel, child) {
-                return Text(
-                  viewModel.dateTime,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                );
-              }),
-              Center(
-                child: Card(
-                  color: const Color(0x776148a3),
-                  child: SizedBox(
-                    width: 300,
-                    height: 80,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        customCard("text"),
-                        const Text(
-                          "low",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        const Text(
-                          "feels like",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
+                }),
+                const SizedBox(
+                  height: 16,
+                ),
+                Center(
+                  child: Card(
+                    color: const Color(0x776148a3),
+                    child: SizedBox(
+                      width: 300,
+                      height: 90,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Consumer<HomePageViewModel>(
+                              builder: (context, viewModel, child) {
+                            return customCard(
+                                "high",
+                                mainweather!.list[0].main.tempMax.toString() ??
+                                    "",
+                                const Icon(
+                                  Icons.arrow_upward,
+                                  color: Colors.white,
+                                ));
+                          }),
+                          Consumer<HomePageViewModel>(
+                              builder: (context, viewModel, child) {
+                            return customCard(
+                                "low",
+                                mainweather!.list[0].main.tempMin.toString() ??
+                                    "",
+                                const Icon(
+                                  Icons.arrow_downward,
+                                  color: Colors.white,
+                                ));
+                          }),
+                          Consumer<HomePageViewModel>(
+                              builder: (context, viewModel, child) {
+                            return customCard(
+                                "feels like",
+                                mainweather!.list[0].main.feelsLike
+                                        .toString() ??
+                                    "",
+                                const Icon(
+                                  Icons.heart_broken,
+                                  color: Colors.white,
+                                ));
+                          }),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      "today",
-                      style: TextStyle(
-                        color: Colors.white,
+                const SizedBox(
+                  height: 16,
+                ),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        "5-day Forecast",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      "5-day Forecast",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                SizedBox(
+                  height: 120,
+                  //width: 100,
+                  child: Consumer<HomePageViewModel>(
+                    builder: (context, viewModel, child) => ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: mainweather!.list.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        //int originalIndex = index * 4;
 
-              SizedBox(
-                height: 50,
-                child: ListView(
-                  // This next line does the trick.
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    Container(
-                      width: 160,
-                      color: Colors.red,
-                    ),
-                    Container(
-                      width: 160,
-                      color: Colors.blue,
-                    ),
-                    Container(
-                      width: 160,
-                      color: Colors.green,
-                    ),
-                    Container(
-                      width: 160,
-                      color: Colors.yellow,
-                    ),
-                    Container(
-                      width: 160,
-                      color: Colors.orange,
-                    ),
-                  ],
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      "Other Cities",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                        if (temp.day < mainweather!.list[index].dtTxt.day) {
+                          temp = mainweather!.list[index].dtTxt;
+                          return customWeatherCard(
+                            mainweather!.list[index].main.temp.toString(),
+                            mainweather!.list[index].weather[0].main.name,
+                            viewModel.weekDay(
+                                mainweather!.list[index].dtTxt.weekday),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: InkWell(
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                      ),
-                      onTap: () {},
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 50,
-                child: ListView(
-                  // This next line does the trick.
-                  scrollDirection: Axis.horizontal,
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      width: 160,
-                      color: Colors.red,
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        "Other Cities",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    Container(
-                      width: 160,
-                      color: Colors.blue,
-                    ),
-                    Container(
-                      width: 160,
-                      color: Colors.green,
-                    ),
-                    Container(
-                      width: 160,
-                      color: Colors.yellow,
-                    ),
-                    Container(
-                      width: 160,
-                      color: Colors.orange,
-                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: InkWell(
+                        child: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                        ),
+                        onTap: () {},
+                      ),
+                    )
                   ],
                 ),
-              ),
-              //bottomnavbar
-            ],
-          ),
+                const SizedBox(
+                  height: 16,
+                ),
+                SizedBox(
+                  height: 120,
+                  //width: 100,
+                  child: Consumer<HomePageViewModel>(
+                    builder: (context, viewModel, child) => ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: viewModel.cities.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        //int originalIndex = index * 4;
+
+                        return customCityWeatherCard(
+                            viewModel.cityiesWeather[index].list[0].main.temp
+                                .toString(),
+                            viewModel.cityiesWeather[index].list[0].weather[0]
+                                .main.name,
+                            viewModel.cityiesWeather[index].city.name,
+                            viewModel.cityiesWeather[index].list[0].weather[0]
+                                .description);
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+              ],
+            ),
+          ]),
         ),
       ),
     );
   }
 
-  Widget customCard(String text) {
+  Widget customCard(String text, String temp, Icon i) {
     return SizedBox(
-      width: 45,
-      height: 45,
+      width: 60,
+      height: 70,
       child: Column(
         children: [
-          const Icon(
-            Icons.abc,
-            color: Colors.white,
+          i,
+          Text(
+            temp,
+            style: const TextStyle(color: Colors.white),
           ),
           Text(
             text,
             style: const TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget customWeatherCard(String temp, String pic, String day) {
+    return Card(
+      color: const Color(0x776148a3),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 29,
+            width: 110,
+            child: Image.asset(
+              "assets/images/$pic.png",
+              fit: BoxFit.fitHeight,
+            ),
+          ),
+          Text(
+            temp,
+            style: const TextStyle(color: Colors.white),
+          ),
+          Text(
+            day,
+            style: const TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget customCityWeatherCard(
+      String temp, String pic, String name, String status) {
+    return Card(
+      color: const Color(0x776148a3),
+      child: Row(
+        //mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 40,
+            width: 70,
+            child: Image.asset(
+              "assets/images/$pic.png",
+              fit: BoxFit.fitHeight,
+            ),
+          ),
+          SizedBox(
+            width: 120,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                Text(
+                  status,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            width: 8,
+          ),
+          SizedBox(
+            width: 50,
+            child: Text(
+              temp,
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
