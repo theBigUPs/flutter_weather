@@ -6,7 +6,8 @@ abstract interface class LocalStorage {
   bool get isCelsius;
   Future<void> saveIsCelsius(bool value);
   Future<void> saveCities(List<String> cities);
-  List<String> getCities();
+  Future<List<String>> getCities();
+  void deleteCity(String city);
 }
 
 class SharedPrefStorage implements LocalStorage {
@@ -36,7 +37,19 @@ class SharedPrefStorage implements LocalStorage {
   }
 
   @override
-  List<String> getCities() {
-    return prefs.getStringList(cityListKey) ?? [];
-  }
+Future<List<String>> getCities() async {
+  return prefs.getStringList(cityListKey) ?? [];
+}
+  
+@override
+void deleteCity(String city) {
+  List<String> cities; 
+  getCities().then((value) {
+    cities=value;
+    cities.remove(city);
+    saveCities(cities);
+  });
+  
+}
+
 }

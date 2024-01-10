@@ -1,30 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_weather/src/models/weather_model.dart';
 import 'package:flutter_weather/src/services/local_storage.dart';
-import 'package:flutter_weather/src/services/routing_service.dart';
 import 'package:flutter_weather/src/services/service_adapter.dart';
 import 'package:flutter_weather/src/services/web_api.dart';
 
 class HomePageViewModel with ChangeNotifier {
   final WebApi _webApi;
   final LocalStorage _storage;
-  final RoutingService _rout;
 
   HomePageViewModel(
-      {WebApi? webApi, LocalStorage? storage, RoutingService? route})
+      {WebApi? webApi, LocalStorage? storage,})
       : _webApi = webApi ?? getIt<WebApi>(),
-        _storage = storage ?? getIt<LocalStorage>(),
-        _rout = route ?? getIt<RoutingService>();
+        _storage = storage ?? getIt<LocalStorage>();
+      
 
   String temperature = '';
   String buttonUnit = '°C';
   final double _temperature = 0.0;
   String city = "";
-  String desc = "";
   String dateTime = "";
-  String high = "";
-  String low = "";
-  String feels = "";
+  
   String imgState = "CLEAR";
 
   //Weather? weather;
@@ -50,19 +45,19 @@ class HomePageViewModel with ChangeNotifier {
     return null;
   }
 
-  void notify() {
-    notifyListeners();
-    //TODO THIS IS BAD
-  }
+  
 
   void populateCities() {
-    for (var element in cities) {
-      loadWeatherWithCityName(cityName: element).then((value) => {
-            cityiesWeather.add(value!),
-            //notify(),
-            notifyListeners(),
-          });
-    }
+    _storage.getCities().then((value)
+    {
+      cities=value;
+      for (var element in cities) {
+        loadWeatherWithCityName(cityName: element).then((name) => {
+              cityiesWeather.add(name!),
+            });
+      }
+    });
+    notifyListeners();
   }
 
   String weekDay(int dayNum) {
@@ -107,4 +102,7 @@ class HomePageViewModel with ChangeNotifier {
       print(e);
     }
   }
+  
+    
+    
 }

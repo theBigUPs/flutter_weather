@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_weather/src/ui/components/navbar.dart';
 import 'package:flutter_weather/src/view_models/cities_viewmodel.dart';
+import 'package:flutter_weather/src/view_models/home_page_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class CitiesPage extends StatefulWidget {
@@ -19,12 +20,13 @@ class _CitiesPageState extends State<CitiesPage> {
 
     viewModel = Provider.of<CitiesViewModel>(context, listen: false);
     viewModel.readItemsFromFile().then(
-          (value) => viewModel.cities = (value),
+          (value) => viewModel.citiesFromText = (value),
         );
   }
 
   @override
   Widget build(BuildContext context) {
+    HomePageViewModel homeviewModel = Provider.of<HomePageViewModel>(context, listen: false);
     return Scaffold(
       bottomNavigationBar: navbar(context, 1),
       appBar: AppBar(),
@@ -46,11 +48,19 @@ class _CitiesPageState extends State<CitiesPage> {
                 scrollDirection: Axis.vertical,
                 itemCount: viewModel.result.length,
                 itemBuilder: (BuildContext context, int index) {
-                  //int originalIndex = index * 4;
-
-                  return Text(
-                    viewModel.result[index],
-                    style: const TextStyle(color: Colors.white),
+                  return ListTile(
+                    onLongPress: () {
+                      
+                    },
+                    onTap: (){
+                      homeviewModel.cities.add(viewModel.result[index]);
+                    },
+                    title: Text(
+                      viewModel.result[index],
+                      style: const TextStyle(color: Colors.white),
+                      
+                    ),
+                    
                   );
                 },
               ),

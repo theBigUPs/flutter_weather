@@ -2,9 +2,22 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_weather/src/services/local_storage.dart';
+import 'package:flutter_weather/src/services/routing_service.dart';
+import 'package:flutter_weather/src/services/service_adapter.dart';
 
 class CitiesViewModel with ChangeNotifier {
-  List<String> cities = [];
+  final LocalStorage _storage;
+  final RoutingService _route;
+  CitiesViewModel(
+      {LocalStorage? storage,RoutingService? route,})
+      : 
+        _storage = storage ?? getIt<LocalStorage>(),
+        _route = route ?? getIt<RoutingService>();
+
+
+
+  List<String> citiesFromText = [];
   List<String> result = [];
   Future<List<String>> readItemsFromFile() async {
     try {
@@ -23,7 +36,25 @@ class CitiesViewModel with ChangeNotifier {
   }
 
   void updateList(String contains) {
-    result = cities.where((city) => city.contains(contains)).toList();
+    result = citiesFromText.where((city) => city.contains(contains)).toList();
     notifyListeners();
   }
+
+  void addCity(String city, BuildContext context)
+  {
+    List<String>cities;
+     _storage.getCities().then((value) { 
+      cities =value;
+      cities.add(city);
+      _storage.saveCities(cities);
+      _route.goToHomeTab(context);});
+    
+    
+  }
+
+  void deleteCity(String city)
+  {
+    _storage.deleteCity(city);
+  }
+
 }
