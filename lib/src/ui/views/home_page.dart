@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Weather? mainweather;
   final _loc = getIt<LocationService>();
   //final store = getIt<LocalStorage>();
   @override
@@ -25,29 +26,29 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     HomePageViewModel viewModel = Provider.of(context, listen: false);
     DateTime temp = DateTime.now();
-    Weather? mainweather;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       HomePageViewModel viewModel = Provider.of(
         context,
         listen: false,
       );
 
-      viewModel.loadWeatherWithCityName(cityName: "istanbul").then((value) {
-        mainweather = value;
+      // viewModel.loadWeatherWithCityName(cityName: "istanbul").then((value) {
+      //   mainweather = value;
 
-        viewModel.populateCities();
-        viewModel.notify();
-      });
+      //   viewModel.notify();
+      // });
+      //viewModel.populateCities();
     });
     return Scaffold(
-      bottomNavigationBar: navbar(),
+      bottomNavigationBar: navbar(context, 0),
       appBar: AppBar(
         backgroundColor: const Color(0xff28227f),
         centerTitle: true,
         title: Consumer<HomePageViewModel>(
           builder: (context, viewModel, child) {
             return Text(
-              mainweather!.city.name ?? "",
+              mainweather?.city.name ?? "",
               style: const TextStyle(color: Colors.white),
             );
           },
@@ -61,13 +62,15 @@ class _HomePageState extends State<HomePage> {
                 viewModel
                     .loadWeatherWithCityName(cityName: "istanbul")
                     .then((value) {
-                  mainweather = value;
                   temp = DateTime.now();
-                  //viewModel.notify();
-                  viewModel.populateCities();
-                  viewModel.notify();
-                });
+                  mainweather = value;
 
+                  //viewModel.notify();
+
+                  //viewModel.notify();
+                });
+                viewModel.populateCities();
+                //viewModel.notify();
                 //viewModel.loadWeatherLatLon(latitude: 40.73, longtitude: -73.93);
                 // Call the determinePosition method when the button is pressed
 
@@ -125,9 +128,7 @@ class _HomePageState extends State<HomePage> {
                 Consumer<HomePageViewModel>(
                   builder: (context, viewModel, child) {
                     return Text(
-                      (mainweather == null)
-                          ? ""
-                          : mainweather!.list[0].weather[0].description ?? "",
+                      mainweather?.list[0].weather[0].description ?? "",
                       style: const TextStyle(color: Colors.white),
                     );
                   },
@@ -140,14 +141,14 @@ class _HomePageState extends State<HomePage> {
                     child: Consumer<HomePageViewModel>(
                         builder: (context, viewModel, child) {
                       return Image.asset(
-                        "assets/images/${mainweather!.list[0].weather[0].main.name ?? "CLEAR"}.png",
+                        "assets/images/${mainweather?.list[0].weather[0].main.name ?? "CLEAR"}.png",
                         fit: BoxFit.fitHeight,
                       );
                     })),
                 Consumer<HomePageViewModel>(
                   builder: (context, viewModel, child) {
                     return Text(
-                      " ${mainweather!.list[0].main.temp ?? ""}°",
+                      " ${mainweather?.list[0].main.temp ?? ""}°",
                       style: const TextStyle(color: Colors.white, fontSize: 64),
                     );
                   },
@@ -178,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                               builder: (context, viewModel, child) {
                             return customCard(
                                 "high",
-                                mainweather!.list[0].main.tempMax.toString() ??
+                                mainweather?.list[0].main.tempMax.toString() ??
                                     "",
                                 const Icon(
                                   Icons.arrow_upward,
@@ -189,7 +190,7 @@ class _HomePageState extends State<HomePage> {
                               builder: (context, viewModel, child) {
                             return customCard(
                                 "low",
-                                mainweather!.list[0].main.tempMin.toString() ??
+                                mainweather?.list[0].main.tempMin.toString() ??
                                     "",
                                 const Icon(
                                   Icons.arrow_downward,
@@ -200,7 +201,7 @@ class _HomePageState extends State<HomePage> {
                               builder: (context, viewModel, child) {
                             return customCard(
                                 "feels like",
-                                mainweather!.list[0].main.feelsLike
+                                mainweather?.list[0].main.feelsLike
                                         .toString() ??
                                     "",
                                 const Icon(
@@ -240,7 +241,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (context, viewModel, child) => ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.horizontal,
-                      itemCount: mainweather!.list.length,
+                      itemCount: mainweather?.list.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
                         //int originalIndex = index * 4;
 
@@ -253,7 +254,10 @@ class _HomePageState extends State<HomePage> {
                                 mainweather!.list[index].dtTxt.weekday),
                           );
                         } else {
-                          return Container();
+                          //temp = DateTime.now();
+                          return Container(
+                              //child: const Text("no weather service or internet"),
+                              );
                         }
                       },
                     ),
@@ -296,18 +300,24 @@ class _HomePageState extends State<HomePage> {
                     builder: (context, viewModel, child) => ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.horizontal,
-                      itemCount: viewModel.cities.length,
+                      itemCount: (viewModel.cities.isEmpty)
+                          ? 0
+                          : viewModel.cities.length,
                       itemBuilder: (BuildContext context, int index) {
-                        //int originalIndex = index * 4;
+                        if (index >= viewModel.cityiesWeather.length) {
+                          // Handle the case when either cities or cityiesWeather is empty
+                          return Container();
+                        }
 
                         return customCityWeatherCard(
-                            viewModel.cityiesWeather[index].list[0].main.temp
-                                .toString(),
-                            viewModel.cityiesWeather[index].list[0].weather[0]
-                                .main.name,
-                            viewModel.cityiesWeather[index].city.name,
-                            viewModel.cityiesWeather[index].list[0].weather[0]
-                                .description);
+                          viewModel.cityiesWeather[index].list[0].main.temp
+                              .toString(),
+                          viewModel.cityiesWeather[index].list[0].weather[0]
+                              .main.name,
+                          viewModel.cityiesWeather[index].city.name,
+                          viewModel.cityiesWeather[index].list[0].weather[0]
+                              .description,
+                        );
                       },
                     ),
                   ),

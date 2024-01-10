@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather/src/services/routing_service.dart';
+import 'package:flutter_weather/src/services/service_adapter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-Widget navbar() {
+Widget navbar(BuildContext context, int index) {
   return GNav(
       backgroundColor: const Color(0xff441c50),
       rippleColor:
@@ -25,26 +27,42 @@ Widget navbar() {
       iconSize: 20, // tab button icon size
       tabBackgroundColor:
           const Color(0xff634386), // selected tab background color
-      padding: const EdgeInsets.symmetric(
-          horizontal: 14, vertical: 15), // navigation bar padding
-      tabs: const [
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
+      selectedIndex: index,
+      tabs: [
         GButton(
-          margin: EdgeInsets.fromLTRB(32, 0, 0, 0),
+          margin: const EdgeInsets.fromLTRB(32, 0, 0, 0),
           icon: Icons.home,
           text: '',
+          onPressed: () {
+            RoutingService rout = getIt<RoutingService>();
+            rout.goToHomeTab(context);
+          },
         ),
         GButton(
           icon: Icons.search,
           text: '',
+          onPressed: () {
+            RoutingService rout = getIt<RoutingService>();
+            rout.goToCitiesTab(context);
+          },
         ),
         GButton(
           icon: Icons.person,
           text: '',
+          onPressed: () {
+            RoutingService rout = getIt<RoutingService>();
+            rout.goToUserTab(context);
+          },
         ),
         GButton(
-          margin: EdgeInsets.fromLTRB(0, 0, 32, 0),
+          margin: const EdgeInsets.fromLTRB(0, 0, 32, 0),
           icon: Icons.notifications,
           text: '',
+          onPressed: () {
+            RoutingService rout = getIt<RoutingService>();
+            rout.goToHomeTab(context);
+          },
         )
       ]);
 }
