@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_weather/src/ui/components/navbar.dart';
 import 'package:flutter_weather/src/view_models/cities_viewmodel.dart';
-import 'package:flutter_weather/src/view_models/home_page_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class CitiesPage extends StatefulWidget {
@@ -26,21 +25,39 @@ class _CitiesPageState extends State<CitiesPage> {
 
   @override
   Widget build(BuildContext context) {
-    HomePageViewModel homeviewModel = Provider.of<HomePageViewModel>(context, listen: false);
     return Scaffold(
       bottomNavigationBar: navbar(context, 1),
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text(
+          "Tap to Add Longtap to Delete",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xff28227f),
+      ),
       backgroundColor: const Color(0xff28227f),
       body: SafeArea(
         child: Column(children: [
-          TextField(
-            controller: citySearch,
-            onChanged: (text) {
-              viewModel.updateList(text);
-            },
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                filled: true,
+                hintStyle: TextStyle(color: Colors.grey[600]),
+                hintText: "You Can Search Cities to Add Here",
+                fillColor: Colors.white70,
+              ),
+              onChanged: (text) {
+                viewModel.updateList(text);
+              },
+              style: const TextStyle(color: Colors.black),
+            ),
           ),
-          SizedBox(
-            height: 190,
+          Expanded(
+            //height: 190,
             //width: 100,
             child: Consumer<CitiesViewModel>(
               builder: (context, viewModel, child) => ListView.builder(
@@ -50,17 +67,16 @@ class _CitiesPageState extends State<CitiesPage> {
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
                     onLongPress: () {
-                      
+                      viewModel.deleteCity(viewModel.result[index], context);
                     },
-                    onTap: (){
-                      homeviewModel.cities.add(viewModel.result[index]);
+                    onTap: () {
+                      //homeviewModel.cities.add(viewModel.result[index]);
+                      viewModel.addCity(viewModel.result[index], context);
                     },
                     title: Text(
                       viewModel.result[index],
                       style: const TextStyle(color: Colors.white),
-                      
                     ),
-                    
                   );
                 },
               ),

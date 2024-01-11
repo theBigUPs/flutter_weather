@@ -8,18 +8,19 @@ class HomePageViewModel with ChangeNotifier {
   final WebApi _webApi;
   final LocalStorage _storage;
 
-  HomePageViewModel(
-      {WebApi? webApi, LocalStorage? storage,})
-      : _webApi = webApi ?? getIt<WebApi>(),
+  HomePageViewModel({
+    WebApi? webApi,
+    LocalStorage? storage,
+  })  : _webApi = webApi ?? getIt<WebApi>(),
         _storage = storage ?? getIt<LocalStorage>();
-      
 
+  Weather? mainweather;
   String temperature = '';
   String buttonUnit = '°C';
   final double _temperature = 0.0;
   String city = "";
   String dateTime = "";
-  
+  DateTime temp = DateTime.now();
   String imgState = "CLEAR";
 
   //Weather? weather;
@@ -35,7 +36,7 @@ class HomePageViewModel with ChangeNotifier {
       Weather weather = await _webApi.getWeather(
         cityName: cityName,
       );
-
+      temp = DateTime.now();
       getDateTime();
       notifyListeners();
       return weather;
@@ -45,12 +46,9 @@ class HomePageViewModel with ChangeNotifier {
     return null;
   }
 
-  
-
   void populateCities() {
-    _storage.getCities().then((value)
-    {
-      cities=value;
+    _storage.getCities().then((value) {
+      cities = value;
       for (var element in cities) {
         loadWeatherWithCityName(cityName: element).then((name) => {
               cityiesWeather.add(name!),
@@ -102,7 +100,4 @@ class HomePageViewModel with ChangeNotifier {
       print(e);
     }
   }
-  
-    
-    
 }

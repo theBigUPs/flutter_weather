@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_weather/src/models/weather_model.dart';
 import 'package:flutter_weather/src/services/location_service.dart';
 import 'package:flutter_weather/src/services/service_adapter.dart';
 import 'package:flutter_weather/src/ui/components/navbar.dart';
@@ -14,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Weather? mainweather;
   final _loc = getIt<LocationService>();
   //final store = getIt<LocalStorage>();
   @override
@@ -24,8 +22,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    HomePageViewModel viewModel = Provider.of(context, listen: false);
-    DateTime temp = DateTime.now();
+    //HomePageViewModel viewModel = Provider.of(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       HomePageViewModel viewModel = Provider.of(
@@ -48,7 +45,7 @@ class _HomePageState extends State<HomePage> {
         title: Consumer<HomePageViewModel>(
           builder: (context, viewModel, child) {
             return Text(
-              mainweather?.city.name ?? "",
+              viewModel.mainweather?.city.name ?? "",
               style: const TextStyle(color: Colors.white),
             );
           },
@@ -62,14 +59,10 @@ class _HomePageState extends State<HomePage> {
                 viewModel
                     .loadWeatherWithCityName(cityName: "istanbul")
                     .then((value) {
-                  temp = DateTime.now();
-                  mainweather = value;
-
-                  //viewModel.notify();
-
-                  //viewModel.notify();
+                  viewModel.mainweather = value;
+                  viewModel.populateCities();
                 });
-                viewModel.populateCities();
+
                 //viewModel.notify();
                 //viewModel.loadWeatherLatLon(latitude: 40.73, longtitude: -73.93);
                 // Call the determinePosition method when the button is pressed
@@ -128,7 +121,8 @@ class _HomePageState extends State<HomePage> {
                 Consumer<HomePageViewModel>(
                   builder: (context, viewModel, child) {
                     return Text(
-                      mainweather?.list[0].weather[0].description ?? "",
+                      viewModel.mainweather?.list[0].weather[0].description ??
+                          "",
                       style: const TextStyle(color: Colors.white),
                     );
                   },
@@ -141,14 +135,14 @@ class _HomePageState extends State<HomePage> {
                     child: Consumer<HomePageViewModel>(
                         builder: (context, viewModel, child) {
                       return Image.asset(
-                        "assets/images/${mainweather?.list[0].weather[0].main.name ?? "CLEAR"}.png",
+                        "assets/images/${viewModel.mainweather?.list[0].weather[0].main.name ?? "CLEAR"}.png",
                         fit: BoxFit.fitHeight,
                       );
                     })),
                 Consumer<HomePageViewModel>(
                   builder: (context, viewModel, child) {
                     return Text(
-                      " ${mainweather?.list[0].main.temp ?? ""}°",
+                      " ${viewModel.mainweather?.list[0].main.temp ?? ""}°",
                       style: const TextStyle(color: Colors.white, fontSize: 64),
                     );
                   },
@@ -179,7 +173,8 @@ class _HomePageState extends State<HomePage> {
                               builder: (context, viewModel, child) {
                             return customCard(
                                 "high",
-                                mainweather?.list[0].main.tempMax.toString() ??
+                                viewModel.mainweather?.list[0].main.tempMax
+                                        .toString() ??
                                     "",
                                 const Icon(
                                   Icons.arrow_upward,
@@ -190,7 +185,8 @@ class _HomePageState extends State<HomePage> {
                               builder: (context, viewModel, child) {
                             return customCard(
                                 "low",
-                                mainweather?.list[0].main.tempMin.toString() ??
+                                viewModel.mainweather?.list[0].main.tempMin
+                                        .toString() ??
                                     "",
                                 const Icon(
                                   Icons.arrow_downward,
@@ -201,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                               builder: (context, viewModel, child) {
                             return customCard(
                                 "feels like",
-                                mainweather?.list[0].main.feelsLike
+                                viewModel.mainweather?.list[0].main.feelsLike
                                         .toString() ??
                                     "",
                                 const Icon(
@@ -241,17 +237,22 @@ class _HomePageState extends State<HomePage> {
                     builder: (context, viewModel, child) => ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.horizontal,
-                      itemCount: mainweather?.list.length ?? 0,
+                      itemCount: viewModel.mainweather?.list.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
                         //int originalIndex = index * 4;
+                        //
 
-                        if (temp.day < mainweather!.list[index].dtTxt.day) {
-                          temp = mainweather!.list[index].dtTxt;
+                        if (viewModel.temp.day <
+                            viewModel.mainweather!.list[index].dtTxt.day) {
+                          viewModel.temp =
+                              viewModel.mainweather!.list[index].dtTxt;
                           return customWeatherCard(
-                            mainweather!.list[index].main.temp.toString(),
-                            mainweather!.list[index].weather[0].main.name,
-                            viewModel.weekDay(
-                                mainweather!.list[index].dtTxt.weekday),
+                            viewModel.mainweather!.list[index].main.temp
+                                .toString(),
+                            viewModel
+                                .mainweather!.list[index].weather[0].main.name,
+                            viewModel.weekDay(viewModel
+                                .mainweather!.list[index].dtTxt.weekday),
                           );
                         } else {
                           //temp = DateTime.now();

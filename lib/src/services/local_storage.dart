@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract interface class LocalStorage {
@@ -8,6 +9,7 @@ abstract interface class LocalStorage {
   Future<void> saveCities(List<String> cities);
   Future<List<String>> getCities();
   void deleteCity(String city);
+  void addCity(String city, BuildContext context);
 }
 
 class SharedPrefStorage implements LocalStorage {
@@ -37,19 +39,27 @@ class SharedPrefStorage implements LocalStorage {
   }
 
   @override
-Future<List<String>> getCities() async {
-  return prefs.getStringList(cityListKey) ?? [];
-}
-  
-@override
-void deleteCity(String city) {
-  List<String> cities; 
-  getCities().then((value) {
-    cities=value;
-    cities.remove(city);
-    saveCities(cities);
-  });
-  
-}
+  Future<List<String>> getCities() async {
+    return prefs.getStringList(cityListKey) ?? [];
+  }
 
+  @override
+  void deleteCity(String city) {
+    List<String> cities;
+    getCities().then((value) {
+      cities = value;
+      cities.remove(city);
+      saveCities(cities);
+    });
+  }
+
+  @override
+  void addCity(String city, BuildContext context) {
+    List<String> cities;
+    getCities().then((value) {
+      cities = value;
+      cities.add(city);
+      saveCities(cities);
+    });
+  }
 }

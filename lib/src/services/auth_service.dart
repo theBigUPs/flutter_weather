@@ -1,39 +1,35 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 abstract interface class Auth {
-  Future<void> init();
-  Future<void> getInstance();
-  Future<void> loginUser();
-  Future<void> signInUser();
-  Future<void> checkPresence();
+  Future<void> loginUser(String email, String password);
+  Future<void> signUpUser();
+  bool checkPresence();
 }
 
 class FirebaseAuthService implements Auth {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuth get authInstance => _auth;
+
   @override
-  Future<void> checkPresence() {
-    // TODO: implement checkPresence
-    throw UnimplementedError();
+  bool checkPresence() {
+    return _auth.currentUser != null;
   }
 
   @override
-  Future<void> init() {
-    // TODO: implement init
-    throw UnimplementedError();
+  Future<void> loginUser(String email, String password) async {
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      //print(_auth.currentUser.toString());
+      //_auth.signOut();
+      //goToCountriesPage(context);
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+    }
   }
 
   @override
-  Future<void> loginUser() {
-    // TODO: implement loginUser
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> signInUser() {
+  Future<void> signUpUser() {
     // TODO: implement signInUser
-    throw UnimplementedError();
-  }
-  
-  @override
-  Future<void> getInstance() {
-    // TODO: implement getInstance
     throw UnimplementedError();
   }
 }

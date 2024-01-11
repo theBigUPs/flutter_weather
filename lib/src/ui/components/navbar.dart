@@ -48,6 +48,7 @@ Widget navbar(BuildContext context, int index) {
           },
         ),
         GButton(
+          margin: const EdgeInsets.fromLTRB(0, 0, 32, 0),
           icon: Icons.person,
           text: '',
           onPressed: () {
@@ -55,14 +56,5 @@ Widget navbar(BuildContext context, int index) {
             rout.goToUserTab(context);
           },
         ),
-        GButton(
-          margin: const EdgeInsets.fromLTRB(0, 0, 32, 0),
-          icon: Icons.notifications,
-          text: '',
-          onPressed: () {
-            RoutingService rout = getIt<RoutingService>();
-            rout.goToHomeTab(context);
-          },
-        )
       ]);
 }

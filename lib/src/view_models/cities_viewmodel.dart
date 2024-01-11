@@ -9,13 +9,11 @@ import 'package:flutter_weather/src/services/service_adapter.dart';
 class CitiesViewModel with ChangeNotifier {
   final LocalStorage _storage;
   final RoutingService _route;
-  CitiesViewModel(
-      {LocalStorage? storage,RoutingService? route,})
-      : 
-        _storage = storage ?? getIt<LocalStorage>(),
+  CitiesViewModel({
+    LocalStorage? storage,
+    RoutingService? route,
+  })  : _storage = storage ?? getIt<LocalStorage>(),
         _route = route ?? getIt<RoutingService>();
-
-
 
   List<String> citiesFromText = [];
   List<String> result = [];
@@ -40,21 +38,13 @@ class CitiesViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void addCity(String city, BuildContext context)
-  {
-    List<String>cities;
-     _storage.getCities().then((value) { 
-      cities =value;
-      cities.add(city);
-      _storage.saveCities(cities);
-      _route.goToHomeTab(context);});
-    
-    
+  void addCity(String city, BuildContext context) {
+    _storage.addCity(city, context);
+    _route.goToHomeTab(context);
   }
 
-  void deleteCity(String city)
-  {
+  void deleteCity(String city, BuildContext context) {
     _storage.deleteCity(city);
+    _route.goToHomeTab(context);
   }
-
 }
