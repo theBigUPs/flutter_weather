@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 abstract interface class DatabaseService {
-  Future<void> init();
-  Future<void> getInstance();
-  Future<void> saveUserSettings();
+  Future<void> saveUserSettings(List<String> cities,String userid);
   Future<void> getUserSettings();
   Future<void> deleteUserSettings();
 
@@ -9,17 +9,14 @@ abstract interface class DatabaseService {
 
 class FirebaseDatabaseService implements DatabaseService 
 {
+  final FirebaseFirestore _store = FirebaseFirestore.instance;
   @override
   Future<void> deleteUserSettings() {
     // TODO: implement deleteUserSettings
     throw UnimplementedError();
   }
 
-  @override
-  Future<void> getInstance() {
-    // TODO: implement getInstance
-    throw UnimplementedError();
-  }
+  
 
   @override
   Future<void> getUserSettings() {
@@ -27,16 +24,10 @@ class FirebaseDatabaseService implements DatabaseService
     throw UnimplementedError();
   }
 
-  @override
-  Future<void> init() {
-    // TODO: implement init
-    throw UnimplementedError();
-  }
 
   @override
-  Future<void> saveUserSettings() {
-    // TODO: implement saveUserSettings
-    throw UnimplementedError();
+  Future<void> saveUserSettings(List<String> cities,String userid) async{
+    await _store.collection("user_settings").doc(userid).set({"citylist":cities});
   }
 
 }

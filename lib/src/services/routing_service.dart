@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_weather/src/ui/views/cities_page.dart';
 import 'package:flutter_weather/src/ui/views/home_page.dart';
 import 'package:flutter_weather/src/ui/views/login_page.dart';
-import 'package:flutter_weather/src/ui/views/sign_in_page.dart';
+import 'package:flutter_weather/src/ui/views/sign_up_page.dart';
 import 'package:flutter_weather/src/ui/views/user_page.dart';
 import 'package:flutter_weather/src/view_models/cities_viewmodel.dart';
 import 'package:flutter_weather/src/view_models/home_page_viewmodel.dart';

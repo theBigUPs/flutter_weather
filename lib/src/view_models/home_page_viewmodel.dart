@@ -86,18 +86,20 @@ class HomePageViewModel with ChangeNotifier {
         "${weekDay(dayName)}, ${now.day}/${now.month}/${now.year} | ${now.hour}:${min.length == 1 ? "0$min" : min}";
   }
 
-  Future<void> loadWeatherLatLon(
+  Future<Weather?> loadWeatherLatLon(
       {required double latitude, required double longtitude}) async {
     try {
       final weather =
           await _webApi.getWeatherLatLon(lat: latitude, lon: longtitude);
-      //_temperature = weather.main.temp;
-      temperature = _temperature.toString();
-      //desc = weather.weather[0].description;
-      //city = weather.name;
+
+      temp = DateTime.now();
+      getDateTime();
       notifyListeners();
+      return weather;
+      
     } catch (e) {
       print(e);
     }
+    return null;
   }
 }

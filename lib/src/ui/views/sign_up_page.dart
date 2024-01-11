@@ -54,21 +54,7 @@ class SignInPage extends StatelessWidget {
                   controller: password,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    filled: true,
-                    hintStyle: TextStyle(color: Colors.grey[600]),
-                    hintText: "Password again",
-                    fillColor: Colors.white70,
-                  ),
-                  controller: passwordAgain,
-                ),
-              ),
+              
               ElevatedButton(onPressed: () {}, child: const Text("Register")),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
