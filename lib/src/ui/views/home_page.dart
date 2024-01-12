@@ -30,6 +30,27 @@ class _HomePageState extends State<HomePage> {
         listen: false,
       );
 
+      _loc.determinePosition().then((position) {
+        // Handle the position data as needed
+        print(
+            'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+
+        viewModel
+            .loadWeatherLatLon(
+                latitude: position.latitude, longtitude: position.longitude)
+            .then((value) => {viewModel.mainweather = value});
+        viewModel.populateCities();
+      }).catchError((error) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const AlertDialog(
+                title: Text("Please enable location Services"),
+              );
+            });
+        // Handle errors if any
+        print('Error: $error');
+      });
       // viewModel.loadWeatherWithCityName(cityName: "istanbul").then((value) {
       //   mainweather = value;
 
@@ -86,14 +107,7 @@ class _HomePageState extends State<HomePage> {
                 //   // Handle errors if any
                 //   print('Error: $error');
                 // });
-                // String cities = await store.getCities();
-                // List<String> stringList = cities
-                //     .replaceAll('[', '')
-                //     .replaceAll(']', '')
-                //     .split(',')
-                //     .map((e) => e.trim())
-                //     .toList();
-                // print(stringList);
+                //
               },
               icon: const Icon(
                 Icons.refresh,

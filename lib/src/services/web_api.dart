@@ -43,7 +43,7 @@ class OpenWeatherApi implements WebApi {
   Future<Weather> getWeatherLatLon(
       {required double lat, required double lon}) async {
     final url = Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=2e25b2bfc703c1d877cae76e2026a7cd&units=metric');
+        'https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&appid=2e25b2bfc703c1d877cae76e2026a7cd&units=metric');
 
     try {
       final response = await http.get(url);
