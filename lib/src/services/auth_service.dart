@@ -31,7 +31,7 @@ class FirebaseAuthService implements Auth {
     try 
     {
       await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      print("user created");
+      
       return true;
       
     }
@@ -47,7 +47,7 @@ class FirebaseAuthService implements Auth {
     try 
     {
       await _auth.signOut();
-      print("user created");
+      
       
       
     }

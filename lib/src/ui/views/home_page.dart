@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop(); 
                   },
                   child: const Text('OK'),
                 ),
@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                     actions: <Widget>[
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
+                          Navigator.of(context).pop(); 
                         },
                         child: const Text('OK'),
                       ),

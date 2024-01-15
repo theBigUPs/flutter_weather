@@ -10,6 +10,8 @@ abstract interface class LocalStorage {
   Future<List<String>> getCities();
   void deleteCity(String city);
   void addCity(String city, BuildContext context);
+  Future<void> addStarterCity(String city);
+  Future<void> getStarterCity(String city);
 }
 
 class SharedPrefStorage implements LocalStorage {
@@ -17,6 +19,7 @@ class SharedPrefStorage implements LocalStorage {
   static const latitudeKey = "isLatitude";
   static const longtitudeKey = "isLongtitude";
   static const cityListKey = "cityList";
+  static const startingCity = "beginningCity";
 
   late SharedPreferences prefs;
 
@@ -61,5 +64,15 @@ class SharedPrefStorage implements LocalStorage {
       cities.add(city);
       saveCities(cities);
     });
+  }
+  
+  @override
+  Future<void> addStarterCity(String city) async{
+    await prefs.setString(startingCity, city);
+  }
+  
+  @override
+  Future<String?> getStarterCity(String city) async{
+    return prefs.getString(startingCity);
   }
 }
