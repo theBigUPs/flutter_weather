@@ -16,13 +16,17 @@ class LoginViewModel with ChangeNotifier {
   }
 
   void logIn(String email, String password, BuildContext context) {
-    _auth.loginUser(email, password);
-    reDirect(context);
+    _auth.loginUser(email, password).then((value) 
+    {
+      reDirect(context);
+      notifyListeners();
+    });
+    
   }
 
   void reDirect(BuildContext context) {
     bool loggedOn = _auth.checkPresence();
-    //print(loggedOn);
+    print(loggedOn);
     if (loggedOn) {
       _route.goToLogTab(context);
     } else {

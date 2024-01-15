@@ -1,12 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_weather/src/models/weather_model.dart';
 import 'package:flutter_weather/src/services/local_storage.dart';
+import 'package:flutter_weather/src/services/location_service.dart';
 import 'package:flutter_weather/src/services/service_adapter.dart';
 import 'package:flutter_weather/src/services/web_api.dart';
 
 class HomePageViewModel with ChangeNotifier {
   final WebApi _webApi;
   final LocalStorage _storage;
+  final _loc = getIt<LocationService>();
 
   HomePageViewModel({
     WebApi? webApi,
@@ -17,7 +19,6 @@ class HomePageViewModel with ChangeNotifier {
   Weather? mainweather;
   String temperature = '';
   String buttonUnit = '°C';
-  final double _temperature = 0.0;
   String city = "";
   String dateTime = "";
   DateTime temp = DateTime.now();
@@ -86,20 +87,27 @@ class HomePageViewModel with ChangeNotifier {
         "${weekDay(dayName)}, ${now.day}/${now.month}/${now.year} | ${now.hour}:${min.length == 1 ? "0$min" : min}";
   }
 
-  Future<Weather?> loadWeatherLatLon(
-      {required double latitude, required double longtitude}) async {
-    try {
-      final weather =
-          await _webApi.getWeatherLatLon(lat: latitude, lon: longtitude);
+  Future<Weather?> loadWeatherLatLon() async {
+  dynamic latitude;
+  dynamic longitude;
+  
+  try {
+    final position = await _loc.determinePosition();
 
-      temp = DateTime.now();
-      getDateTime();
-      notifyListeners();
-      return weather;
-      
-    } catch (e) {
-      print(e);
-    }
+    // Handle the position data as needed
+    print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+    latitude = position.latitude;
+    longitude = position.longitude;
+
+    final weather = await _webApi.getWeatherLatLon(lat: latitude, lon: longitude);
+
+    temp = DateTime.now();
+    getDateTime();
+    notifyListeners();
+    return weather;
+  } catch (e) {
+    print(e);
     return null;
   }
+}
 }

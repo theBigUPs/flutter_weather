@@ -17,9 +17,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      LoginViewModel viewModel =
-          Provider.of<LoginViewModel>(context, listen: false);
-      viewModel.logIn(email.text, password.text, context);
+      
+      //viewModel.logIn(email.text, password.text, context);
     });
     return Scaffold(
       appBar: AppBar(

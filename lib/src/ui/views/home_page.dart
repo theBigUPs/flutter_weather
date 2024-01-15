@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_weather/src/services/location_service.dart';
-import 'package:flutter_weather/src/services/service_adapter.dart';
 import 'package:flutter_weather/src/ui/components/navbar.dart';
 import 'package:flutter_weather/src/view_models/home_page_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _loc = getIt<LocationService>();
+  
   //final store = getIt<LocalStorage>();
   @override
   void initState() {
@@ -29,34 +27,12 @@ class _HomePageState extends State<HomePage> {
         context,
         listen: false,
       );
-
-      _loc.determinePosition().then((position) {
-        // Handle the position data as needed
-        print(
-            'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
-
         viewModel
-            .loadWeatherLatLon(
-                latitude: position.latitude, longtitude: position.longitude)
+            .loadWeatherLatLon()
             .then((value) => {viewModel.mainweather = value});
         viewModel.populateCities();
-      }).catchError((error) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return const AlertDialog(
-                title: Text("Please enable location Services"),
-              );
-            });
-        // Handle errors if any
-        print('Error: $error');
-      });
-      // viewModel.loadWeatherWithCityName(cityName: "istanbul").then((value) {
-      //   mainweather = value;
-
-      //   viewModel.notify();
-      // });
-      //viewModel.populateCities();
+      
+      
     });
     return Scaffold(
       bottomNavigationBar: navbar(context, 0),
@@ -77,37 +53,16 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 HomePageViewModel viewModel =
                     Provider.of(context, listen: false);
-                viewModel
-                    .loadWeatherWithCityName(cityName: "istanbul")
-                    .then((value) {
-                  viewModel.mainweather = value;
-                  viewModel.populateCities();
-                });
-
-                //viewModel.notify();
-                //viewModel.loadWeatherLatLon(latitude: 40.73, longtitude: -73.93);
-                // Call the determinePosition method when the button is pressed
-
-                // _loc.determinePosition().then((position) {
-                //   // Handle the position data as needed
-                //   print(
-                //       'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
-
-                //   viewModel.loadWeatherLatLon(
-                //       latitude: position.latitude,
-                //       longtitude: position.longitude);
-                // }).catchError((error) {
-                //   showDialog(
-                //       context: context,
-                //       builder: (BuildContext context) {
-                //         return const AlertDialog(
-                //           title: Text("Please enable location Services"),
-                //         );
-                //       });
-                //   // Handle errors if any
-                //   print('Error: $error');
+                // viewModel
+                //     .loadWeatherWithCityName(cityName: "istanbul")
+                //     .then((value) {
+                //   viewModel.mainweather = value;
+                //   viewModel.populateCities();
                 // });
-                //
+                viewModel
+                    .loadWeatherLatLon()
+                    .then((value) => {viewModel.mainweather = value});
+                viewModel.populateCities();
               },
               icon: const Icon(
                 Icons.refresh,
