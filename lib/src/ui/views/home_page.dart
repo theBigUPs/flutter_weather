@@ -27,10 +27,35 @@ class _HomePageState extends State<HomePage> {
         context,
         listen: false,
       );
-        viewModel
-            .loadWeatherLatLon()
-            .then((value) => {viewModel.mainweather = value});
-        viewModel.populateCities();
+      viewModel
+      .loadWeatherLatLon()
+      .then((value) => {
+        if(value==null)
+        {
+          showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Location Service Not Available'),
+              content: const Text('Please enable location services to use this feature.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        )
+        }
+        else
+        {
+          viewModel.mainweather = value
+        },
+        });
+      viewModel.populateCities();
       
       
     });
@@ -49,25 +74,50 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () {
-                HomePageViewModel viewModel =
-                    Provider.of(context, listen: false);
-                // viewModel
-                //     .loadWeatherWithCityName(cityName: "istanbul")
-                //     .then((value) {
-                //   viewModel.mainweather = value;
-                //   viewModel.populateCities();
-                // });
-                viewModel
-                    .loadWeatherLatLon()
-                    .then((value) => {viewModel.mainweather = value});
-                viewModel.populateCities();
+          padding: const EdgeInsets.all(0),
+          onPressed: () {
+            HomePageViewModel viewModel =
+                Provider.of(context, listen: false);
+            // viewModel
+            //     .loadWeatherWithCityName(cityName: "istanbul")
+            //     .then((value) {
+            //   viewModel.mainweather = value;
+            //   viewModel.populateCities();
+            // });
+            viewModel
+            .loadWeatherLatLon()
+            .then((value) => {
+              if(value==null)
+              {
+                showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Location Service Not Available'),
+                    content: const Text('Please enable location services to use this feature.'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  );
+                },
+              )
+              }
+              else
+              {
+                viewModel.mainweather = value
               },
-              icon: const Icon(
-                Icons.refresh,
-                color: Colors.white,
-              ))
+              });
+            viewModel.populateCities();
+          },
+          icon: const Icon(
+            Icons.refresh,
+            color: Colors.white,
+          ))
         ],
       ),
       //backgroundColor: const Color(0xff28227f),
