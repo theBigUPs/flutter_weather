@@ -11,7 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
   //final store = getIt<LocalStorage>();
   @override
   void initState() {
@@ -22,42 +21,43 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     //HomePageViewModel viewModel = Provider.of(context, listen: false);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       HomePageViewModel viewModel = Provider.of(
         context,
         listen: false,
       );
-      viewModel
-      .loadWeatherLatLon()
-      .then((value) => {
-        if(value==null)
-        {
-          showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Location Service Not Available'),
-              content: const Text('Please enable location services to use this feature.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); 
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        )
-        }
-        else
-        {
-          viewModel.mainweather = value
-        },
-        });
+      await viewModel.getStartingCity()
+          ? viewModel
+              .loadWeatherWithCityName(cityName: viewModel.starterCity ?? "")
+              .then((value) {
+              viewModel.mainweather = value;
+            })
+          : viewModel.loadWeatherLatLon().then((value) => {
+                if (value == null)
+                  {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Location Service Not Available'),
+                          content: const Text(
+                              'Please enable location services to use this feature.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    )
+                  }
+                else
+                  {viewModel.mainweather = value},
+              });
       viewModel.populateCities();
-      
-      
     });
     return Scaffold(
       bottomNavigationBar: navbar(context, 0),
@@ -74,50 +74,42 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-          padding: const EdgeInsets.all(0),
-          onPressed: () {
-            HomePageViewModel viewModel =
-                Provider.of(context, listen: false);
-            // viewModel
-            //     .loadWeatherWithCityName(cityName: "istanbul")
-            //     .then((value) {
-            //   viewModel.mainweather = value;
-            //   viewModel.populateCities();
-            // });
-            viewModel
-            .loadWeatherLatLon()
-            .then((value) => {
-              if(value==null)
-              {
-                showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Location Service Not Available'),
-                    content: const Text('Please enable location services to use this feature.'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); 
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  );
-                },
-              )
-              }
-              else
-              {
-                viewModel.mainweather = value
+              padding: const EdgeInsets.all(0),
+              onPressed: () {
+                HomePageViewModel viewModel =
+                    Provider.of(context, listen: false);
+                viewModel.loadWeatherLatLon().then((value) => {
+                      if (value == null)
+                        {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text(
+                                    'Location Service Not Available'),
+                                content: const Text(
+                                    'Please enable location services to use this feature.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          )
+                        }
+                      else
+                        {viewModel.mainweather = value},
+                    });
+                viewModel.populateCities();
               },
-              });
-            viewModel.populateCities();
-          },
-          icon: const Icon(
-            Icons.refresh,
-            color: Colors.white,
-          ))
+              icon: const Icon(
+                Icons.refresh,
+                color: Colors.white,
+              ))
         ],
       ),
       //backgroundColor: const Color(0xff28227f),

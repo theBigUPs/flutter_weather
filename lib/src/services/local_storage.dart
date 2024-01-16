@@ -12,6 +12,8 @@ abstract interface class LocalStorage {
   void addCity(String city, BuildContext context);
   Future<void> addStarterCity(String city);
   Future<String?> getStarterCity();
+  Future<void> setIsLocationOn(bool loc);
+  Future<bool?> getIsLocationOn();
 }
 
 class SharedPrefStorage implements LocalStorage {
@@ -20,6 +22,7 @@ class SharedPrefStorage implements LocalStorage {
   static const longtitudeKey = "isLongtitude";
   static const cityListKey = "cityList";
   static const startingCity = "beginningCity";
+  static const locOn = "locationAllowed";
 
   late SharedPreferences prefs;
 
@@ -65,14 +68,24 @@ class SharedPrefStorage implements LocalStorage {
       saveCities(cities);
     });
   }
-  
+
   @override
-  Future<void> addStarterCity(String city) async{
+  Future<void> addStarterCity(String city) async {
     await prefs.setString(startingCity, city);
   }
-  
+
   @override
-  Future<String?> getStarterCity() async{
+  Future<String?> getStarterCity() async {
     return prefs.getString(startingCity);
+  }
+
+  @override
+  Future<void> setIsLocationOn(bool loc) async {
+    await prefs.setBool(locOn, loc);
+  }
+
+  @override
+  Future<bool?> getIsLocationOn() async {
+    return prefs.getBool(locOn);
   }
 }

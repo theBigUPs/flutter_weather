@@ -23,7 +23,7 @@ class HomePageViewModel with ChangeNotifier {
   String dateTime = "";
   DateTime temp = DateTime.now();
   String imgState = "CLEAR";
-  String? starterCity="";
+  String? starterCity = "";
 
   //Weather? weather;
   List<String> cities = [
@@ -91,7 +91,7 @@ class HomePageViewModel with ChangeNotifier {
   Future<Weather?> loadWeatherLatLon() async {
     dynamic latitude;
     dynamic longitude;
-    
+
     try {
       final position = await _loc.determinePosition();
 
@@ -100,7 +100,8 @@ class HomePageViewModel with ChangeNotifier {
       latitude = position.latitude;
       longitude = position.longitude;
 
-      final weather = await _webApi.getWeatherLatLon(lat: latitude, lon: longitude);
+      final weather =
+          await _webApi.getWeatherLatLon(lat: latitude, lon: longitude);
 
       temp = DateTime.now();
       getDateTime();
@@ -112,11 +113,15 @@ class HomePageViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> getStartingCity ()async
-  {
-    
-    starterCity = await _storage.getStarterCity();
-    
-    
+  Future<bool> getStartingCity() async {
+    var value = await _storage.getStarterCity();
+    if (value != null) {
+      starterCity = value;
+      //loadWeatherWithCityName(cityName: value);
+      //print(value);
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 }

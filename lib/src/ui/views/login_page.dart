@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_weather/src/ui/components/navbar.dart';
 import 'package:flutter_weather/src/view_models/login_viewmodel.dart';
 import 'package:provider/provider.dart'; // Import your LoginViewModel
@@ -13,12 +14,18 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
+
   @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      
       //viewModel.logIn(email.text, password.text, context);
+      //LoginViewModel viewModel = Provider.of<LoginViewModel>(context, listen: false);
+      //viewModel.reDirect(context);
     });
     return Scaffold(
       appBar: AppBar(

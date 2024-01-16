@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather/src/services/auth_service.dart';
 import 'package:flutter_weather/src/services/routing_service.dart';
 import 'package:flutter_weather/src/services/service_adapter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -53,7 +54,10 @@ Widget navbar(BuildContext context, int index) {
           text: '',
           onPressed: () {
             RoutingService rout = getIt<RoutingService>();
-            rout.goToUserTab(context);
+            Auth auth = getIt<Auth>();
+            auth.checkPresence()
+                ? rout.goToLogTab(context)
+                : rout.goToUserTab(context);
           },
         ),
       ]);

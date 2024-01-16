@@ -26,7 +26,6 @@ class LoginViewModel with ChangeNotifier {
 
   void reDirect(BuildContext context) {
     bool loggedOn = _auth.checkPresence();
-    print(loggedOn);
     if (loggedOn) {
       _route.goToLogTab(context);
     } else {
