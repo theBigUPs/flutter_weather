@@ -11,7 +11,7 @@ abstract interface class LocalStorage {
   void deleteCity(String city);
   void addCity(String city, BuildContext context);
   Future<void> addStarterCity(String city);
-  Future<void> getStarterCity(String city);
+  Future<String?> getStarterCity();
 }
 
 class SharedPrefStorage implements LocalStorage {
@@ -72,7 +72,7 @@ class SharedPrefStorage implements LocalStorage {
   }
   
   @override
-  Future<String?> getStarterCity(String city) async{
+  Future<String?> getStarterCity() async{
     return prefs.getString(startingCity);
   }
 }
