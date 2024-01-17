@@ -13,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  //final store = getIt<LocalStorage>();
   @override
   void initState() {
     super.initState();
@@ -22,7 +21,7 @@ class HomePageState extends State<HomePage> {
         context,
         listen: false,
       );
-      await viewModel.getCelsius();
+      viewModel.getCelsius();
       await viewModel.getUseLocation() ?? true
           ? viewModel.loadWeatherLatLon().then((value) => {
                 if (value == null)
@@ -39,7 +38,6 @@ class HomePageState extends State<HomePage> {
               })
           : await viewModel.getStartingCity();
       viewModel.populateCities();
-      //viewModel.temp = DateTime.now();
     });
   }
 
@@ -104,7 +102,6 @@ class HomePageState extends State<HomePage> {
                         })
                     : await viewModel.getStartingCity();
                 viewModel.populateCities();
-                //viewModel.temp = DateTime.now();
               },
               icon: const Icon(
                 Icons.refresh,
@@ -112,7 +109,6 @@ class HomePageState extends State<HomePage> {
               ))
         ],
       ),
-      //backgroundColor: const Color(0xff28227f),
       body: SafeArea(
         child: Container(
           decoration: const BoxDecoration(
@@ -125,7 +121,6 @@ class HomePageState extends State<HomePage> {
           child: ListView(
             children: [
               Column(
-                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(
                     height: 8,
@@ -233,16 +228,13 @@ class HomePageState extends State<HomePage> {
                   ),
                   SizedBox(
                     height: 120,
-                    //width: 100,
                     child: Consumer<HomePageViewModel>(
                       builder: (context, viewModel, child) => ListView.builder(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
                         itemCount: viewModel.mainweather?.list.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
-                          //int originalIndex = index * 4;
-                          //
-
                           if (viewModel.temp.day <
                               viewModel.mainweather!.list[index].dtTxt.day) {
                             viewModel.temp =
@@ -255,10 +247,7 @@ class HomePageState extends State<HomePage> {
                                   .mainweather!.list[index].dtTxt.weekday),
                             );
                           } else {
-                            //temp = DateTime.now();
-                            return Container(
-                                //child: const Text("no weather service or internet"),
-                                );
+                            return Container();
                           }
                         },
                       ),
@@ -296,7 +285,6 @@ class HomePageState extends State<HomePage> {
                   ),
                   SizedBox(
                     height: 120,
-                    //width: 100,
                     child: Consumer<HomePageViewModel>(
                       builder: (context, viewModel, child) => ListView.builder(
                         shrinkWrap: true,
@@ -306,7 +294,6 @@ class HomePageState extends State<HomePage> {
                             : viewModel.cities.length,
                         itemBuilder: (BuildContext context, int index) {
                           if (index >= viewModel.cityiesWeather.length) {
-                            // Handle the case when either cities or cityiesWeather is empty
                             return Container();
                           }
 

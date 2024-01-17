@@ -21,7 +21,6 @@ class HomePageViewModel with ChangeNotifier {
   String city = "";
   String dateTime = "";
   DateTime temp = DateTime.now();
-  String imgState = "CLEAR";
   String? starterCity = "";
   double tempCoefficient = 1;
   List<String> cities = [];
@@ -125,7 +124,7 @@ class HomePageViewModel with ChangeNotifier {
     return await _storage.getIsLocationOn();
   }
 
-  Future<void> getCelsius() async {
+  void getCelsius() {
     temp = DateTime.now();
     isCelsius = _storage.isCelsius;
     if (isCelsius) {
