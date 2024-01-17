@@ -28,7 +28,7 @@ class CitiesViewModel with ChangeNotifier {
       lines = lines.map((line) => line.toLowerCase()).toList();
       return lines;
     } catch (e) {
-      print('Error reading file: $e');
+      //print('Error reading file: $e');
       return ["not available"];
     }
   }

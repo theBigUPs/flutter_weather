@@ -7,10 +7,10 @@ class CitiesPage extends StatefulWidget {
   const CitiesPage({Key? key}) : super(key: key);
 
   @override
-  _CitiesPageState createState() => _CitiesPageState();
+  CitiesPageState createState() => CitiesPageState();
 }
 
-class _CitiesPageState extends State<CitiesPage> {
+class CitiesPageState extends State<CitiesPage> {
   late CitiesViewModel viewModel;
   final TextEditingController citySearch = TextEditingController();
   @override

@@ -290,13 +290,13 @@ class WeatherElement {
       };
 }
 
-enum MainEnum { CLEAR, CLOUDS, RAIN, SNOW }
+enum MainEnum { clear, clouds, rain, snow }
 
 final mainEnumValues = EnumValues({
-  "Clear": MainEnum.CLEAR,
-  "Clouds": MainEnum.CLOUDS,
-  "Rain": MainEnum.RAIN,
-  "Snow": MainEnum.SNOW
+  "Clear": MainEnum.clear,
+  "Clouds": MainEnum.clouds,
+  "Rain": MainEnum.rain,
+  "Snow": MainEnum.snow
 });
 
 class Wind {

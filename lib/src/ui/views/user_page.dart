@@ -7,14 +7,13 @@ class UserPage extends StatefulWidget {
   const UserPage({Key? key}) : super(key: key);
 
   @override
-  _UserPageState createState() => _UserPageState();
+  UserPageState createState() => UserPageState();
 }
 
-class _UserPageState extends State<UserPage> {
+class UserPageState extends State<UserPage> {
   @override
   void initState() {
     super.initState();
-    // Call your function or perform initialization here
   }
 
   @override

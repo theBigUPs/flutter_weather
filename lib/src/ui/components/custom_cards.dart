@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 Widget customCard(String text, String temp, Icon i) {
   return SizedBox(
-    width: 60,
+    width: 65,
     height: 70,
     child: Column(
       children: [

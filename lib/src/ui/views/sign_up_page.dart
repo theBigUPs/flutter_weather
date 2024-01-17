@@ -10,7 +10,7 @@ class SignInPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController email = TextEditingController();
     final TextEditingController password = TextEditingController();
-    final TextEditingController passwordAgain = TextEditingController();
+    //final TextEditingController passwordAgain = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff28227f),
@@ -54,7 +54,6 @@ class SignInPage extends StatelessWidget {
                   controller: password,
                 ),
               ),
-              
               ElevatedButton(onPressed: () {}, child: const Text("Register")),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

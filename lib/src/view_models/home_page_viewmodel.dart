@@ -17,20 +17,16 @@ class HomePageViewModel with ChangeNotifier {
         _storage = storage ?? getIt<LocalStorage>();
 
   Weather? mainweather;
-  String temperature = '';
   String buttonUnit = '°C';
   String city = "";
   String dateTime = "";
   DateTime temp = DateTime.now();
   String imgState = "CLEAR";
   String? starterCity = "";
-
-  //Weather? weather;
-  List<String> cities = [
-    "new york",
-    "sydney",
-  ];
+  double tempCoefficient = 1;
+  List<String> cities = [];
   List<Weather> cityiesWeather = [];
+  bool isCelsius = false;
 
   Future<Weather?> loadWeatherWithCityName({required String cityName}) async {
     city = cityName;
@@ -43,7 +39,7 @@ class HomePageViewModel with ChangeNotifier {
       notifyListeners();
       return weather;
     } catch (e) {
-      print(e);
+      //print(e);
     }
     return null;
   }
@@ -96,7 +92,7 @@ class HomePageViewModel with ChangeNotifier {
       final position = await _loc.determinePosition();
 
       // Handle the position data as needed
-      print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+      //print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
       latitude = position.latitude;
       longitude = position.longitude;
 
@@ -108,20 +104,41 @@ class HomePageViewModel with ChangeNotifier {
       notifyListeners();
       return weather;
     } catch (e) {
-      print(e);
+      //print(e);
       return null;
     }
   }
 
-  Future<bool> getStartingCity() async {
+  Future<void> getStartingCity() async {
     var value = await _storage.getStarterCity();
     if (value != null) {
       starterCity = value;
-      //loadWeatherWithCityName(cityName: value);
-      //print(value);
+      await loadWeatherWithCityName(cityName: value)
+          .then((value) => mainweather = value);
+      temp = DateTime.now();
+
       notifyListeners();
-      return true;
     }
-    return false;
+  }
+
+  Future<bool?> getUseLocation() async {
+    return await _storage.getIsLocationOn();
+  }
+
+  Future<void> getCelsius() async {
+    temp = DateTime.now();
+    isCelsius = _storage.isCelsius;
+    if (isCelsius) {
+      buttonUnit = '°C';
+      tempCoefficient = 1;
+    } else {
+      buttonUnit = '°F';
+      tempCoefficient = 1.8;
+    }
+    notifyListeners();
+  }
+
+  void setCelsius(bool newCel) {
+    _storage.saveIsCelsius(newCel).then((value) => getCelsius());
   }
 }

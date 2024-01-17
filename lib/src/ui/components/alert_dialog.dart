@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//TODO this needs to be made generic later
 AlertDialog alertDialog(BuildContext context) {
   return AlertDialog(
     title: const Text('Location Service Not Available'),
