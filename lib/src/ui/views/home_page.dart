@@ -12,10 +12,11 @@ class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       HomePageViewModel viewModel = Provider.of(
         context,
@@ -39,6 +40,27 @@ class HomePageState extends State<HomePage> {
           : await viewModel.getStartingCity();
       viewModel.populateCities();
     });
+  }
+
+  @override
+  void dispose() {
+    // Dispose resources or perform cleanup when the widget is removed from the tree.
+    WidgetsBinding.instance.removeObserver(this);
+    //TODO put savetofirebase here
+    //print("HOME PAGE DISPOSED");
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      //TODO put savetofirebase here as well
+      //print("paused app on homepage");
+    } else if (state == AppLifecycleState.resumed) {
+      // App is in the foreground
+    } else if (state == AppLifecycleState.detached) {
+      //print("killed homepage");
+    }
   }
 
   @override

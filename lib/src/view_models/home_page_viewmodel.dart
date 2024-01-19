@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_weather/src/models/weather_model.dart';
+import 'package:flutter_weather/src/services/auth_service.dart';
+import 'package:flutter_weather/src/services/database_service.dart';
 import 'package:flutter_weather/src/services/local_storage.dart';
 import 'package:flutter_weather/src/services/location_service.dart';
 import 'package:flutter_weather/src/services/service_adapter.dart';
@@ -8,13 +10,21 @@ import 'package:flutter_weather/src/services/web_api.dart';
 class HomePageViewModel with ChangeNotifier {
   final WebApi _webApi;
   final LocalStorage _storage;
-  final _loc = getIt<LocationService>();
+  final LocationService _loc;
+  final DatabaseService _dbs;
+  final Auth _auth;
 
-  HomePageViewModel({
-    WebApi? webApi,
-    LocalStorage? storage,
-  })  : _webApi = webApi ?? getIt<WebApi>(),
-        _storage = storage ?? getIt<LocalStorage>();
+  HomePageViewModel(
+      {WebApi? webApi,
+      LocalStorage? storage,
+      LocationService? loc,
+      DatabaseService? dbs,
+      Auth? auth})
+      : _webApi = webApi ?? getIt<WebApi>(),
+        _storage = storage ?? getIt<LocalStorage>(),
+        _loc = loc ?? getIt<LocationService>(),
+        _dbs = dbs ?? getIt<DatabaseService>(),
+        _auth = auth ?? getIt<Auth>();
 
   Weather? mainweather;
   String buttonUnit = '°C';
@@ -139,5 +149,9 @@ class HomePageViewModel with ChangeNotifier {
 
   void setCelsius(bool newCel) {
     _storage.saveIsCelsius(newCel).then((value) => getCelsius());
+  }
+
+  Future<void> saveUserSettingsToFirebase() async {
+    //await _dbs.saveUserSettings(cities, userid, startingCity, isCelsius, isLocationOn)
   }
 }
