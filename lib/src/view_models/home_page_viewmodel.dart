@@ -30,7 +30,8 @@ class HomePageViewModel with ChangeNotifier {
   String buttonUnit = '°C';
   String city = "";
   String dateTime = "";
-  DateTime temp = DateTime.now();
+  DateTime temp = DateTime(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0);
   String? starterCity = "";
   double tempCoefficient = 1;
   List<String> cities = [];
@@ -43,7 +44,8 @@ class HomePageViewModel with ChangeNotifier {
       Weather weather = await _webApi.getWeather(
         cityName: cityName,
       );
-      temp = DateTime.now();
+      temp = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0);
       getDateTime();
       notifyListeners();
       return weather;
@@ -108,7 +110,8 @@ class HomePageViewModel with ChangeNotifier {
       final weather =
           await _webApi.getWeatherLatLon(lat: latitude, lon: longitude);
 
-      temp = DateTime.now();
+      temp = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0);
       getDateTime();
       notifyListeners();
       return weather;
@@ -124,7 +127,8 @@ class HomePageViewModel with ChangeNotifier {
       starterCity = value;
       await loadWeatherWithCityName(cityName: value)
           .then((value) => mainweather = value);
-      temp = DateTime.now();
+      temp = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0);
 
       notifyListeners();
     }
@@ -135,7 +139,8 @@ class HomePageViewModel with ChangeNotifier {
   }
 
   void getCelsius() {
-    temp = DateTime.now();
+    temp = DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0);
     isCelsius = _storage.isCelsius;
     if (isCelsius) {
       buttonUnit = '°C';

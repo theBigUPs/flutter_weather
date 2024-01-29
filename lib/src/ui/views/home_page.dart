@@ -257,8 +257,10 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
                         itemCount: viewModel.mainweather?.list.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
-                          if (viewModel.temp.day <
-                              viewModel.mainweather!.list[index].dtTxt.day) {
+                          if (viewModel.mainweather!.list[index].dtTxt
+                                  .difference(viewModel.temp)
+                                  .inDays ==
+                              1) {
                             viewModel.temp =
                                 viewModel.mainweather!.list[index].dtTxt;
                             return customWeatherCard(
